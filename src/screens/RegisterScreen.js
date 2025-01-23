@@ -10,13 +10,22 @@ export default function RegisterScreen({ navigation }) {
     const [error, setError] = useState('');
 
     const handleRegister = async () => {
-        try {
-            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-            navigation.replace('Home');
-        } catch (error) {
-            setError('Error al registrarse: ' + error.message);
+        if (!email.includes("@")) {
+          setError("Por favor, ingresa un email válido.");
+          return;
         }
-    };
+        if (password.length < 6) {
+          setError("La contraseña debe tener al menos 6 caracteres.");
+          return;
+        }
+      
+        try {
+          const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+          navigation.replace('Home');
+        } catch (error) {
+          setError('Error al registrarse: ' + error.message);
+        }
+      };
 
     return (
         <View style={styles.container}>
