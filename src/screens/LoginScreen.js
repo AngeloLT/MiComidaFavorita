@@ -10,10 +10,41 @@ export default function LoginScreen({ navigation }) {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const [secureText, setSecureText] = useState(true);
+    const [emailError, setEmailError] = useState('');
+    const [passwordError, setPasswordError] = useState('');
+
+    // Validar formato de email
+    const validateEmail = (email) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            setEmailError('Por favor, ingresa un email válido.');
+        } else {
+            setEmailError('');
+        }
+    };
+
+    // Validar que la contraseña no esté vacía
+    const validatePassword = (password) => {
+        if (password.trim() === '') {
+            setPasswordError('La contraseña no puede estar vacía.');
+        } else {
+            setPasswordError('');
+        }
+    };
 
     const handleLogin = async () => {
         setLoading(true);
         setError('');
+
+        // Validar campos antes de continuar
+        validateEmail(email);
+        validatePassword(password);
+
+        if (emailError || passwordError) {
+            setLoading(false);
+            return;
+        }
+
         try {
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             navigation.replace('Home');
@@ -22,6 +53,11 @@ export default function LoginScreen({ navigation }) {
         } finally {
             setLoading(false);
         }
+    };
+
+    // Función para verificar si el formulario es válido
+    const isFormValid = () => {
+        return email.trim() !== '' && password.trim() !== '' && !emailError && !passwordError;
     };
 
     return (
@@ -33,17 +69,25 @@ export default function LoginScreen({ navigation }) {
             <Input
                 placeholder="Correo Electrónico"
                 value={email}
-                onChangeText={setEmail}
+                onChangeText={(text) => {
+                    setEmail(text);
+                    validateEmail(text);
+                }}
                 autoCapitalize="none"
                 keyboardType="email-address"
                 inputStyle={styles.inputText}
                 leftIcon={<Icon name="email" type="material" color="#58d66b" />}
+                errorMessage={emailError}
+                errorStyle={styles.errorText}
             />
 
             <Input
                 placeholder="Contraseña"
                 value={password}
-                onChangeText={setPassword}
+                onChangeText={(text) => {
+                    setPassword(text);
+                    validatePassword(text);
+                }}
                 secureTextEntry={secureText}
                 inputStyle={styles.inputText}
                 leftIcon={<Icon name="lock" type="material" color="#58d66b" />}
@@ -55,6 +99,8 @@ export default function LoginScreen({ navigation }) {
                         onPress={() => setSecureText(!secureText)}
                     />
                 }
+                errorMessage={passwordError}
+                errorStyle={styles.errorText}
             />
 
             {error && !loading && (
@@ -69,7 +115,7 @@ export default function LoginScreen({ navigation }) {
                 buttonStyle={styles.primaryButton}
                 titleStyle={styles.primaryButtonText}
                 containerStyle={styles.buttonContainer}
-                disabled={loading}
+                disabled={loading || !isFormValid()}
             />
 
             <Button

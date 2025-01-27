@@ -7,9 +7,11 @@ import { auth } from '../config/firebase';
 export default function RegisterScreen({ navigation }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
     const [secureText, setSecureText] = useState(true);
     const [validationMessages, setValidationMessages] = useState([]);
+    const [passwordMatchError, setPasswordMatchError] = useState('');
 
     // Validación desglosada
     const validatePassword = (password) => {
@@ -23,6 +25,14 @@ export default function RegisterScreen({ navigation }) {
         setValidationMessages(messages);
     };
 
+    const validatePasswordMatch = (password, confirmPassword) => {
+        if (password !== confirmPassword) {
+            setPasswordMatchError("Las contraseñas no coinciden.");
+        } else {
+            setPasswordMatchError('');
+        }
+    };
+
     const handleRegister = async () => {
         if (!email.includes("@")) {
             setError("Por favor, ingresa un email válido.");
@@ -34,12 +44,21 @@ export default function RegisterScreen({ navigation }) {
             return;
         }
 
+        if (password !== confirmPassword) {
+            setError("Las contraseñas no coinciden.");
+            return;
+        }
+
         try {
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             navigation.replace('Home');
         } catch (error) {
             setError('Error al registrarse: ' + error.message);
         }
+    };
+
+    const isFormValid = () => {
+        return email.includes("@") && validationMessages.length === 0 && password === confirmPassword;
     };
 
     return (
@@ -65,6 +84,7 @@ export default function RegisterScreen({ navigation }) {
                 onChangeText={(text) => {
                     setPassword(text);
                     validatePassword(text);
+                    validatePasswordMatch(text, confirmPassword);
                 }}
                 secureTextEntry={secureText}
                 inputStyle={styles.inputText}
@@ -78,6 +98,21 @@ export default function RegisterScreen({ navigation }) {
                     />
                 }
                 errorMessage={validationMessages.length > 0 ? "La contraseña no cumple todos los requisitos." : ""}
+                errorStyle={styles.errorText}
+                containerStyle={styles.inputContainer}
+            />
+
+            <Input
+                placeholder="Confirmar Contraseña"
+                value={confirmPassword}
+                onChangeText={(text) => {
+                    setConfirmPassword(text);
+                    validatePasswordMatch(password, text);
+                }}
+                secureTextEntry={secureText}
+                inputStyle={styles.inputText}
+                leftIcon={<Icon name="lock" type="material" color="#58d66b" />}
+                errorMessage={passwordMatchError}
                 errorStyle={styles.errorText}
                 containerStyle={styles.inputContainer}
             />
@@ -98,6 +133,7 @@ export default function RegisterScreen({ navigation }) {
                 buttonStyle={styles.primaryButton}
                 titleStyle={styles.primaryButtonText}
                 containerStyle={styles.buttonContainer}
+                disabled={!isFormValid()}
             />
 
             <Button

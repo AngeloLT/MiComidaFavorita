@@ -8,7 +8,7 @@ const firebaseConfig = {
   projectId: "micomidafavorita-e93d2",
   storageBucket: "micomidafavorita-e93d2.firebasestorage.app",
   messagingSenderId: "360157369581",
-  appId: "t1:360157369581:web:e40eb4a9a9aeddf59de8e4"
+  appId: "1:360157369581:web:e40eb4a9a9aeddf59de8e4",
 };
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
