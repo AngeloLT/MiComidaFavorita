@@ -28,3 +28,8 @@ Iniciar la aplicación
 ![Simulator Screenshot - iPhone 16 Pro - 2025-01-23 at 12 40 14](https://github.com/user-attachments/assets/cc024aba-06d7-4b5a-9284-e7231ef04fb5)
 
 ![Simulator Screenshot - iPhone 16 Pro - 2025-01-23 at 12 41 02](https://github.com/user-attachments/assets/f88b5d73-2a43-44d2-904a-e3c436cc55fc)
+
+
+
+https://github.com/user-attachments/assets/1803a1ac-03a9-4e0a-a2eb-eb0cd6829c11
+
